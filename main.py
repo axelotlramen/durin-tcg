@@ -1,30 +1,10 @@
-import nextcord
-from nextcord.ext import commands
-from dotenv import load_dotenv
+from __future__ import annotations
+
 import os
-import logging
-import colorlog
 
-# Colored log setup
-handler = colorlog.StreamHandler()
-handler.setFormatter(
-    colorlog.ColoredFormatter(
-        fmt="%(log_color)s[%(asctime)s] [%(levelname)-8s] %(name)s: %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S",
-        log_colors={
-            "DEBUG": "cyan",
-            "INFO": "green",
-            "WARNING": "yellow",
-            "ERROR": "red",
-            "CRITICAL": "bold_red",
-        },
-    )
-)
-
-logger = colorlog.getLogger("discord")
-logger.setLevel(logging.INFO)
-logger.addHandler(handler)
-logger.propagate = False
+import nextcord
+from dotenv import load_dotenv
+from nextcord.ext import commands
 
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
@@ -41,7 +21,8 @@ bot: commands.Bot = commands.Bot(
 
 @bot.event
 async def on_ready():
-    logger.info(f"Logged in as {bot.user} (ID: {bot.user.id})")
+    if bot.user:
+        print(f"Logged in as {bot.user} (ID: {bot.user.id})")
 
 
 @bot.command()
