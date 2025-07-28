@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import os
 
-from dotenv import load_dotenv
 import discord
 from discord.ext.commands import Context
+from dotenv import load_dotenv
 
 from bot import AquaBot
 

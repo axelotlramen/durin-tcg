@@ -16,3 +16,15 @@ This project is [MIT](LICENSE) licensed.
 
 - This project would not have been made without all of the [dependencies](pyproject.toml) by the wonderful open source community.
 - The structure of this repository is heavily inspired by [Stelle Music](https://github.com/Ganyu-Studios/stelle-music) and [Hoyo Buddy](https://github.com/seriaati/hoyo-buddy).
+
+## Current Cards Implemented
+
+- Genshin: Freminet, Furina, Hu Tao, Kazuha, Wriothesley
+- ZZZ: Burnice, Ju Fufu, Lycaon, Vivian
+- HSR: Dan Heng, Firefly, Hyacine, Misha, Sunday
+
+## Next Cards to Implement
+
+- Genshin: Jean, Zhongli, Furina, Kinich
+- ZZZ: Sanby, Jane, Hugo, Yi Xuan
+- HSR: Jing Yuan, Acheron, Sunday, Cipher

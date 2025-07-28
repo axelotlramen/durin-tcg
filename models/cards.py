@@ -8,6 +8,7 @@ from constants import (
     CARD_SKILL_ATTACK,
     CARD_ULTIMATE_ATTACK,
 )
+from enums import Game
 from exceptions import InvalidAbilityUseError
 from models.game import Character, Damage
 
@@ -56,6 +57,7 @@ class Card:
         self,
         name: str,
         desc: str,
+        game: Game,
         element: CardElement,
         basic_desc: str | None = None,
         skill_desc: str | None = None,
@@ -63,6 +65,7 @@ class Card:
     ) -> None:
         self.name = name
         self.desc = desc
+        self.game = game
         self.element = element
 
         self.basic_desc = basic_desc or f"{self.name} strikes an enemy."
@@ -95,5 +98,47 @@ class Card:
             damage_number=CARD_ULTIMATE_ATTACK,
         )
 
+    def __repr__(self) -> str:
+        return "**" + self.name + "* : " + self.desc
+
     def __str__(self) -> str:
         return "**" + self.name + "* : " + self.desc
+
+
+class GenshinCard(Card):
+    def __init__(
+        self,
+        name: str,
+        desc: str,
+        element: CardElement,
+        basic_desc: str | None = None,
+        skill_desc: str | None = None,
+        ultimate_desc: str | None = None,
+    ) -> None:
+        super().__init__(name, desc, Game.GENSHIN, element, basic_desc, skill_desc, ultimate_desc)
+
+
+class HSRCard(Card):
+    def __init__(
+        self,
+        name: str,
+        desc: str,
+        element: CardElement,
+        basic_desc: str | None = None,
+        skill_desc: str | None = None,
+        ultimate_desc: str | None = None,
+    ) -> None:
+        super().__init__(name, desc, Game.HSR, element, basic_desc, skill_desc, ultimate_desc)
+
+
+class ZZZCard(Card):
+    def __init__(
+        self,
+        name: str,
+        desc: str,
+        element: CardElement,
+        basic_desc: str | None = None,
+        skill_desc: str | None = None,
+        ultimate_desc: str | None = None,
+    ) -> None:
+        super().__init__(name, desc, Game.ZZZ, element, basic_desc, skill_desc, ultimate_desc)
