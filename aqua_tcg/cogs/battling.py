@@ -1,22 +1,25 @@
 from __future__ import annotations
+
 from collections import defaultdict
 
 import discord
 from discord import app_commands
 from discord.ext import commands
 
-from enums import Game
-from models.cards import Card
-from utils.reading_cards import read_cards
+from ..enums import Game
+from ..models.cards import Card
+from ..models.game import Battle, Character, Player
+from ..utils.reading_cards import read_cards
 
 
-class CardGame(commands.Cog):
+class Battling(commands.GroupCog, name="battle"):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
+        self.cards = read_cards()
 
     @app_commands.command(name="cards", description="List all available cards.")
     async def list_cards(self, interaction: discord.Interaction) -> None:
-        cards = read_cards()
+        cards = self.cards
         if not cards:
             await interaction.response.send_message("No cards found.", ephemeral=True)
             return
@@ -40,6 +43,25 @@ class CardGame(commands.Cog):
 
         await interaction.response.send_message(embed=embed)
 
+    @app_commands.command(
+        name="play_game", description="Simulate a game between Kazuha and Furina."
+    )
+    async def play_game(self, interaction: discord.Interaction) -> None:
+        kazuha_card = self.cards["Kaedehara Kazuha"]
+        furina_card = self.cards["Furina"]
+
+        kazuha_character = Character(kazuha_card)
+        furina_character = Character(furina_card)
+
+        player1 = Player(deck=[kazuha_character], active_character=kazuha_character)
+        player2 = Player(deck=[furina_character], active_character=furina_character)
+
+        game = Battle(player1, player2)
+        result = game.play_game()
+
+        # Respond with battle log
+        await interaction.response.send_message(f"**Battle Result:**\n```\n{result}\n```")
+
 
 async def setup(bot: commands.Bot) -> None:
-    await bot.add_cog(CardGame(bot))
+    await bot.add_cog(Battling(bot))

@@ -9,6 +9,12 @@ class Game(StrEnum):
     ZZZ = "Zenless Zone Zero"
 
 
+class CardAbility(StrEnum):
+    BASIC = "Basic"
+    SKILL = "Skill"
+    ULTIMATE = "Ultimate"
+
+
 class CardElement(StrEnum):
     # Genshin Elements
     GI_PYRO = "Pyro"

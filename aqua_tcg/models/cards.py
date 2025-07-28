@@ -2,18 +2,18 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from constants import (
+from aqua_tcg.constants import (
     CARD_BASIC_ATTACK,
     CARD_ELEMENT_TO_DAMAGE_TYPE,
     CARD_SKILL_ATTACK,
     CARD_ULTIMATE_ATTACK,
 )
-from enums import Game
-from exceptions import InvalidAbilityUseError
-from models.game import Character, Damage
+from aqua_tcg.enums import Game
+from aqua_tcg.exceptions import InvalidAbilityUseError
+from .game import Character, Damage
 
 if TYPE_CHECKING:
-    from enums import CardElement
+    from aqua_tcg.enums import CardElement
 
 
 class Ability:

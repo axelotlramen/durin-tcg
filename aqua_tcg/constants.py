@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from enums import CardDamageType, CardElement
+from aqua_tcg.enums import CardDamageType, CardElement
 
 CARD_BASE_HP = 10
 CARD_BASIC_ATTACK = 1
