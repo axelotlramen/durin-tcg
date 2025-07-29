@@ -3,13 +3,10 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
-from attr import dataclass
-
 from aqua_tcg.constants import CARD_BASE_HP
 from aqua_tcg.enums import CardAbility
 
 if TYPE_CHECKING:
-    from aqua_tcg.enums import CardDamageType
     from models.cards import Card
 
 
@@ -20,13 +17,6 @@ class Character:
         self.current_shield: int = 0
 
         self.final_hp: int = self.current_hp + self.current_shield
-
-
-@dataclass(kw_only=True)
-class Damage:
-    enemy_index: int
-    damage: int
-    damage_type: CardDamageType
 
 
 class Item(ABC):
@@ -56,7 +46,7 @@ class Player:
         if self.deck[ally_id] != self.active_character:
             self.active_character = self.deck[ally_id]
 
-    def use_ability(self, ability: CardAbility, enemy: Player) -> Damage:
+    def use_ability(self, ability: CardAbility, enemy: Player) -> None:
         ability_method = {
             CardAbility.BASIC: self.active_character.card.basic,
             CardAbility.SKILL: self.active_character.card.skill,
@@ -67,7 +57,7 @@ class Player:
             msg = f"Unknown ability type: {ability}"
             raise ValueError(msg)
 
-        return ability_method().use(allies=self.deck, enemies=enemy.deck)
+        ability_method().use(allies=self.deck, enemy=enemy)
 
 
 class Battle:
@@ -89,9 +79,7 @@ class Battle:
             log.append(
                 f"{attacker.active_character.card.name} uses Basic Attack on {defender.active_character.card.name}!"
             )
-            damage: Damage = attacker.use_ability(CardAbility.ULTIMATE, defender)
-
-            defender.deck[damage.enemy_index].current_hp -= damage.damage
+            attacker.use_ability(CardAbility.ULTIMATE, defender)
 
             # Check if defender is defeated
             if defender.active_character.current_hp <= 0:

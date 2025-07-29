@@ -2,18 +2,14 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from aqua_tcg.constants import (
-    CARD_BASIC_ATTACK,
-    CARD_ELEMENT_TO_DAMAGE_TYPE,
-    CARD_SKILL_ATTACK,
-    CARD_ULTIMATE_ATTACK,
-)
+from aqua_tcg.constants import CARD_BASIC_ATTACK, CARD_SKILL_ATTACK, CARD_ULTIMATE_ATTACK
 from aqua_tcg.enums import Game
 from aqua_tcg.exceptions import InvalidAbilityUseError
-from .game import Character, Damage
 
 if TYPE_CHECKING:
     from aqua_tcg.enums import CardElement
+
+    from .game import Character, Player
 
 
 class Ability:
@@ -26,21 +22,21 @@ class Ability:
         self.damage_number = damage_number
         self.target = target
 
-    def use(self, allies: list[Character], enemies: list[Character]) -> Damage:
+    def use(self, allies: list[Character], enemy: Player) -> None:
         if self.target == "enemy":
-            live_enemies = [e for e in enemies if e.final_hp > 0]
-            if not live_enemies:
-                msg = f"No valid enemy targets for skill: {self.name}"
-                raise InvalidAbilityUseError(msg)
+            enemy_active = enemy.active_character
+            damage = self.damage_number
 
-            target = min(live_enemies, key=lambda c: c.final_hp)
-            target_index = enemies.index(target)
+            if enemy_active.current_shield > 0:
+                if damage <= enemy_active.current_shield:
+                    enemy_active.current_shield -= damage
+                    damage = 0
+                else:
+                    damage -= enemy_active.current_shield
+                    enemy_active.current_shield = 0
 
-            return Damage(
-                enemy_index=target_index,
-                damage=self.damage_number,
-                damage_type=CARD_ELEMENT_TO_DAMAGE_TYPE[self.element],
-            )
+            enemy_active.current_hp = max(enemy_active.current_hp - damage, 0)
+            return
 
         live_allies = [a for a in allies if a.final_hp > 0]
         if not live_allies:

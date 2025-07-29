@@ -1,13 +1,11 @@
 from __future__ import annotations
 
-from collections import defaultdict
-
 import discord
 from discord import app_commands
 from discord.ext import commands
 
-from ..enums import Game
-from ..models.cards import Card
+from aqua_tcg.views.pvp_view import PvPGameView
+
 from ..models.game import Battle, Character, Player
 from ..utils.reading_cards import read_cards
 
@@ -17,50 +15,43 @@ class Battling(commands.GroupCog, name="battle"):
         self.bot = bot
         self.cards = read_cards()
 
-    @app_commands.command(name="cards", description="List all available cards.")
-    async def list_cards(self, interaction: discord.Interaction) -> None:
-        cards = self.cards
-        if not cards:
-            await interaction.response.send_message("No cards found.", ephemeral=True)
+    @app_commands.command(name="player", description="Challenge another player")
+    @app_commands.describe(opponent="The user you want to challenge.")
+    async def challange_player(
+        self, interaction: discord.Interaction, opponent: discord.User
+    ) -> None:
+        if opponent.id == interaction.user.id:
+            await interaction.response.send_message("You can't challenge yourself.", ephemeral=True)
             return
 
-        cards_by_game: dict[Game, list[Card]] = defaultdict(list)
-        for card in cards.values():
-            cards_by_game[card.game].append(card)
+        # Player 1
+        hutao = Character(self.cards["Hu Tao"])
+        sunday = Character(self.cards["Sunday"])
+        danheng = Character(self.cards["Dan Heng"])
+        hyacine = Character(self.cards["Hyacine"])
 
-        embed = discord.Embed(
-            title="All Available Cards",
-            description="Here's a list of all cards and their elements:",
-            color=discord.Color.blurple(),
-        )
+        # Player 2
+        freminet = Character(self.cards["Freminet"])
+        kazuha = Character(self.cards["Kaedehara Kazuha"])
+        wrio = Character(self.cards["Wriothesley"])
+        lycaon = Character(self.cards["Lycaon"])
 
-        for game in sorted(cards_by_game.keys()):
-            card_lines = [
-                f"• **{card.name}** — {card.element.value}"
-                for card in sorted(cards_by_game[game], key=lambda c: c.name)
-            ]
-            embed.add_field(name=f"{game.value} Cards", value="\n".join(card_lines), inline=False)
-
-        await interaction.response.send_message(embed=embed)
-
-    @app_commands.command(
-        name="play_game", description="Simulate a game between Kazuha and Furina."
-    )
-    async def play_game(self, interaction: discord.Interaction) -> None:
-        kazuha_card = self.cards["Kaedehara Kazuha"]
-        furina_card = self.cards["Furina"]
-
-        kazuha_character = Character(kazuha_card)
-        furina_character = Character(furina_card)
-
-        player1 = Player(deck=[kazuha_character], active_character=kazuha_character)
-        player2 = Player(deck=[furina_character], active_character=furina_character)
+        player1 = Player(deck=[hutao, sunday, danheng, hyacine], active_character=hutao)
+        player2 = Player(deck=[freminet, kazuha, wrio, lycaon], active_character=freminet)
 
         game = Battle(player1, player2)
-        result = game.play_game()
+        view = PvPGameView(player1=interaction.user, player2=opponent, game=game)
 
-        # Respond with battle log
-        await interaction.response.send_message(f"**Battle Result:**\n```\n{result}\n```")
+        await interaction.response.send_message(
+            content=f"{interaction.user.mention} vs {opponent.mention} - Battle begins!",
+            embeds=[
+                view.build_embed(interaction.user.display_name, player1),
+                view.build_embed(opponent.display_name, player2),
+            ],
+            view=view,
+        )
+
+        view.message = await interaction.original_response()
 
 
 async def setup(bot: commands.Bot) -> None:

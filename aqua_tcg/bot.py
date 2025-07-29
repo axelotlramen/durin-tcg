@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 
 import discord
 from discord.ext import commands, tasks
+
 from .utils.logger import setup_logging
 
 if TYPE_CHECKING:

@@ -6,7 +6,7 @@ import sys
 
 from ..models.cards import Card
 
-CARD_ROOT = pathlib.Path("aqua_tcg/aqua-tcg-assets/cards")
+CARD_ROOT = pathlib.Path("aqua-tcg-assets/cards")
 
 
 def read_cards() -> dict[str, Card]:
