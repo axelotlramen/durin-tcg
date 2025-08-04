@@ -6,19 +6,45 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from ..enums import Game
-from ..models.cards import Card
-from ..models.game import Battle, Character, Player
-from ..utils.reading_cards import read_cards
+from aqua_tcg.models.user import TCGUser
+from aqua_tcg.utils.reading_users import load_all_users, save_all_users
+
+from aqua_tcg.enums import Game
+from aqua_tcg.models.cards import Card
+from aqua_tcg.models.game import Battle, Character, Player
+from aqua_tcg.utils.reading_cards import read_cards
 
 
 class CardGame(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
         self.cards = read_cards()
+        self.users = load_all_users()
 
-    @app_commands.command(name="cards", description="List all available cards.")
-    async def list_cards(self, interaction: discord.Interaction) -> None:
+    @app_commands.command(name="my_cards", description="List all cards in a user's collection.")
+    async def list_user_cards(self, interaction: discord.Interaction) -> None:
+        await interaction.response.defer()
+
+        uid = str(interaction.user.id)
+
+        if uid not in self.users:
+            self.users[uid] = TCGUser()
+            save_all_users(self.users)
+            await interaction.followup.send(
+                "You don't own any cards yet, but your Aqua TCG account has been created. Please use `/warp` or wait for `@axelotlramen` to implement this feature."
+            )
+            return
+
+        user = self.users[uid]
+
+        if not user.owned_cards:
+            await interaction.followup.send(
+                "You don't own any cards yet. Please use `/warp` or wait for `@axelotlramen` to implement this feature."
+            )
+            return
+
+    @app_commands.command(name="all_cards", description="List all available cards.")
+    async def list_all_cards(self, interaction: discord.Interaction) -> None:
         cards = self.cards
         if not cards:
             await interaction.response.send_message("No cards found.", ephemeral=True)

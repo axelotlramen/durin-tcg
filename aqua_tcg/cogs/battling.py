@@ -4,10 +4,10 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from aqua_tcg.views.pvp_view import PvPGameView
+from aqua_tcg.views.pvp_view import ChallengeAcceptView, PvPGameView
 
-from ..models.game import Battle, Character, Player
-from ..utils.reading_cards import read_cards
+from aqua_tcg.models.game import Battle, Character, Player
+from aqua_tcg.utils.reading_cards import read_cards
 
 
 class Battling(commands.GroupCog, name="battle"):
@@ -24,33 +24,15 @@ class Battling(commands.GroupCog, name="battle"):
             await interaction.response.send_message("You can't challenge yourself.", ephemeral=True)
             return
 
-        # Player 1
-        hutao = Character(self.cards["Hu Tao"])
-        sunday = Character(self.cards["Sunday"])
-        danheng = Character(self.cards["Dan Heng"])
-        hyacine = Character(self.cards["Hyacine"])
-
-        # Player 2
-        freminet = Character(self.cards["Freminet"])
-        kazuha = Character(self.cards["Kaedehara Kazuha"])
-        wrio = Character(self.cards["Wriothesley"])
-        lycaon = Character(self.cards["Lycaon"])
-
-        player1 = Player(deck=[hutao, sunday, danheng, hyacine], active_character=hutao)
-        player2 = Player(deck=[freminet, kazuha, wrio, lycaon], active_character=freminet)
-
-        game = Battle(player1, player2)
-        view = PvPGameView(player1=interaction.user, player2=opponent, game=game)
-
-        await interaction.response.send_message(
-            content=f"{interaction.user.mention} vs {opponent.mention} - Battle begins!",
-            embeds=[
-                view.build_embed(interaction.user.display_name, player1),
-                view.build_embed(opponent.display_name, player2),
-            ],
-            view=view,
+        embed = discord.Embed(
+            title="Battle Challenge",
+            description=f"{interaction.user.mention} has challenged {opponent.mention} to a duel!",
+            color=discord.Color.orange(),
         )
 
+        view = ChallengeAcceptView(challenger=interaction.user, opponent=opponent, cards=self.cards)
+
+        await interaction.response.send_message(embed=embed, view=view)
         view.message = await interaction.original_response()
 
 

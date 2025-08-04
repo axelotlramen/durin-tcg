@@ -6,7 +6,11 @@ import sys
 
 from ..models.cards import Card
 
-CARD_ROOT = pathlib.Path("aqua-tcg-assets/cards")
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+CARD_ROOT = pathlib.Path(os.getenv("CARD_ROOT", "fallback.json"))
 
 
 def read_cards() -> dict[str, Card]:
