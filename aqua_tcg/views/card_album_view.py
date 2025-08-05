@@ -27,9 +27,9 @@ class CardAlbumPaginator(View):
             title=current_card.name, description=f"Card {self.index + 1}/{len(self.user_cards)}"
         )
 
-        embed.add_field(name="Basic Attack", value=current_card.basic_desc, inline=False)
-        embed.add_field(name="Skill", value=current_card.skill_desc, inline=False)
-        embed.add_field(name="Ultimate", value=current_card.ultimate_desc, inline=False)
+        embed.add_field(name="Basic Attack", value=current_card.basic.desc, inline=False)
+        embed.add_field(name="Skill", value=current_card.skill.desc, inline=False)
+        embed.add_field(name="Ultimate", value=current_card.ultimate.desc, inline=False)
 
         return embed
 

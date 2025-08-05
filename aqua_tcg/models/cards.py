@@ -7,14 +7,21 @@ from aqua_tcg.enums import Game
 from aqua_tcg.exceptions import InvalidAbilityUseError
 
 if TYPE_CHECKING:
-    from aqua_tcg.enums import CardElement
+    from collections.abc import Callable
 
-    from .game import Character, Player
+    from aqua_tcg.enums import CardElement
+    from aqua_tcg.models.game import Character, Player
 
 
 class Ability:
     def __init__(
-        self, name: str, desc: str, element: CardElement, damage_number: int, target: str = "enemy"
+        self,
+        name: str,
+        desc: str,
+        element: CardElement,
+        damage_number: int,
+        target: str = "enemy",
+        use_func: Callable[[list[Character], Player], None] | None = None,
     ) -> None:
         self.name = name
         self.desc = desc
@@ -22,7 +29,12 @@ class Ability:
         self.damage_number = damage_number
         self.target = target
 
-    def use(self, allies: list[Character], enemy: Player) -> None:
+        if use_func is not None:
+            self._use_func = use_func
+        else:
+            self._use_func = self.default_use
+
+    def default_use(self, allies: list[Character], enemy: Player) -> None:
         if self.target == "enemy":
             enemy_active = enemy.active_character
             damage = self.damage_number
@@ -46,50 +58,33 @@ class Ability:
         msg = "Buffs/Healing not implemented yet."
         raise NotImplementedError(msg)
 
+    def use(self, allies: list[Character], enemy: Player) -> None:
+        return self._use_func(allies, enemy)
+
 
 class Card:
     # Set up the card object
-    def __init__(
-        self,
-        name: str,
-        desc: str,
-        game: Game,
-        element: CardElement,
-        basic_desc: str | None = None,
-        skill_desc: str | None = None,
-        ultimate_desc: str | None = None,
-    ) -> None:
+    def __init__(self, name: str, desc: str, game: Game, element: CardElement) -> None:
         self.name = name
         self.desc = desc
         self.game = game
         self.element = element
 
-        self.basic_desc = basic_desc or f"{self.name} strikes an enemy."
-        self.skill_desc = skill_desc or f"{self.name} uses their unique ability."
-        self.ultimate_desc = (
-            ultimate_desc or f"{self.name} unleashes a devastating ultimate attack."
-        )
-
-    def basic(self) -> Ability:
-        return Ability(
+        self.basic = Ability(
             name=f"{self.name} Basic",
-            desc=self.basic_desc,
+            desc=f"{self.name} strikes an enemy.",
             element=self.element,
             damage_number=CARD_BASIC_ATTACK,
         )
-
-    def skill(self) -> Ability:
-        return Ability(
+        self.skill = Ability(
             name=f"{self.name} Skill",
-            desc=self.skill_desc,
+            desc=f"{self.name} uses their unique ability.",
             element=self.element,
             damage_number=CARD_SKILL_ATTACK,
         )
-
-    def ultimate(self) -> Ability:
-        return Ability(
+        self.ultimate = Ability(
             name=f"{self.name} Ultimate",
-            desc=self.ultimate_desc,
+            desc=f"{self.name} unleashes a devastating ultimate attack.",
             element=self.element,
             damage_number=CARD_ULTIMATE_ATTACK,
         )
@@ -102,39 +97,15 @@ class Card:
 
 
 class GenshinCard(Card):
-    def __init__(
-        self,
-        name: str,
-        desc: str,
-        element: CardElement,
-        basic_desc: str | None = None,
-        skill_desc: str | None = None,
-        ultimate_desc: str | None = None,
-    ) -> None:
-        super().__init__(name, desc, Game.GENSHIN, element, basic_desc, skill_desc, ultimate_desc)
+    def __init__(self, name: str, desc: str, element: CardElement) -> None:
+        super().__init__(name, desc, Game.GENSHIN, element)
 
 
 class HSRCard(Card):
-    def __init__(
-        self,
-        name: str,
-        desc: str,
-        element: CardElement,
-        basic_desc: str | None = None,
-        skill_desc: str | None = None,
-        ultimate_desc: str | None = None,
-    ) -> None:
-        super().__init__(name, desc, Game.HSR, element, basic_desc, skill_desc, ultimate_desc)
+    def __init__(self, name: str, desc: str, element: CardElement) -> None:
+        super().__init__(name, desc, Game.HSR, element)
 
 
 class ZZZCard(Card):
-    def __init__(
-        self,
-        name: str,
-        desc: str,
-        element: CardElement,
-        basic_desc: str | None = None,
-        skill_desc: str | None = None,
-        ultimate_desc: str | None = None,
-    ) -> None:
-        super().__init__(name, desc, Game.ZZZ, element, basic_desc, skill_desc, ultimate_desc)
+    def __init__(self, name: str, desc: str, element: CardElement) -> None:
+        super().__init__(name, desc, Game.ZZZ, element)

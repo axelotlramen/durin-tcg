@@ -6,7 +6,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from aqua_tcg.utils.reading_cards import read_cards
+from aqua_tcg.utils import read_cards
 from aqua_tcg.views.pvp_view import ChallengeAcceptView
 
 if TYPE_CHECKING:

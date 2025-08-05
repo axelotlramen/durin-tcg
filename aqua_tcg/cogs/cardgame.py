@@ -30,7 +30,7 @@ class CardGame(commands.GroupCog, name="cards"):
         if uid not in self.game_data.users:
             self.game_data.add_user(uid)
             await interaction.followup.send(
-                "You don't own any cards yet, but your Aqua TCG account has been created. Please use `/warp` or wait for `@axelotlramen` to implement this feature."
+                "You don't own any cards yet, but your Aqua TCG account has been created. Please use `/warp` to get some cards."
             )
             return
 

@@ -10,7 +10,7 @@ Copyright (c) 2025 Axelle LNU
 
 This project is [MIT](LICENSE) licensed.
 
-- The character and assets used are not my property but are the property of miHoYo Co. Ltd. (HoYoverse)
+- The characters and assets used are not my property but are the property of miHoYo Co. Ltd. (HoYoverse)
 
 ## Acknowledgements
 

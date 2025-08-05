@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import random
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
@@ -7,7 +8,7 @@ from aqua_tcg.constants import CARD_BASE_HP
 from aqua_tcg.enums import CardAbility
 
 if TYPE_CHECKING:
-    from models.cards import Card
+    from aqua_tcg.models.cards import Card
 
 
 class Character:
@@ -57,7 +58,16 @@ class Player:
             msg = f"Unknown ability type: {ability}"
             raise ValueError(msg)
 
-        ability_method().use(allies=self.deck, enemy=enemy)
+        ability_method.use(allies=self.deck, enemy=enemy)
+
+
+class AIPlayer(Player):
+    def choose_ability(self) -> CardAbility:
+        return random.choice([CardAbility.BASIC, CardAbility.SKILL, CardAbility.ULTIMATE])
+
+    def choose_character_switch(self) -> int | None:
+        # TODO: implement logic to decide if and which character to switch to
+        return None
 
 
 class Battle:
