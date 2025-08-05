@@ -1,13 +1,16 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import discord
 from discord import app_commands
 from discord.ext import commands
 
-from aqua_tcg.views.pvp_view import ChallengeAcceptView, PvPGameView
-
-from aqua_tcg.models.game import Battle, Character, Player
 from aqua_tcg.utils.reading_cards import read_cards
+from aqua_tcg.views.pvp_view import ChallengeAcceptView
+
+if TYPE_CHECKING:
+    from aqua_tcg.bot import AquaBot
 
 
 class Battling(commands.GroupCog, name="battle"):
@@ -17,7 +20,7 @@ class Battling(commands.GroupCog, name="battle"):
 
     @app_commands.command(name="player", description="Challenge another player")
     @app_commands.describe(opponent="The user you want to challenge.")
-    async def challange_player(
+    async def challenge_player(
         self, interaction: discord.Interaction, opponent: discord.User
     ) -> None:
         if opponent.id == interaction.user.id:
@@ -36,5 +39,5 @@ class Battling(commands.GroupCog, name="battle"):
         view.message = await interaction.original_response()
 
 
-async def setup(bot: commands.Bot) -> None:
+async def setup(bot: AquaBot) -> None:
     await bot.add_cog(Battling(bot))

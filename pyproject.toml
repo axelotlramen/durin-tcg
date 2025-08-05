@@ -3,6 +3,7 @@ authors = [{ name = "Axelle LNU", email = "aaposramennoodles@gmail.com" }]
 dependencies = [
     "nextcord>=2.5.0",
     "pydantic>=2.8.2",
+    "pydantic-settings>=2.10.1",
     "python-dotenv>=1.0.1",
 ]
 description = "An attempt to turn Hoyoverse characters into playable TCG characters like Genius Invocation TCG from Genshin Impact."

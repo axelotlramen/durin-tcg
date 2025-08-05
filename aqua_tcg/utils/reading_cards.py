@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 import importlib.util
+import os
 import pathlib
 import sys
 
-from ..models.cards import Card
-
 from dotenv import load_dotenv
-import os
+
+from ..models.cards import Card
 
 load_dotenv()
 CARD_ROOT = pathlib.Path(os.getenv("CARD_ROOT", "fallback.json"))

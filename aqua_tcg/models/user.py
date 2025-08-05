@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from pydantic import BaseModel, Field
+from datetime import UTC, datetime
 
-from datetime import datetime, UTC
+from pydantic import BaseModel, Field
 
 
 class CardDeck(BaseModel):
@@ -20,3 +20,4 @@ class TCGUser(BaseModel):
     currency: int = 0
     card_settings: list[CardSettings] = Field(default_factory=list)
     start_date: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    card_pity: int = 0

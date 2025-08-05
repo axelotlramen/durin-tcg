@@ -1,16 +1,11 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
 import discord
 from discord import Interaction
 from discord.ui import Button, View
 
 from aqua_tcg.enums import CardAbility
-from aqua_tcg.models.game import Character
-
-if TYPE_CHECKING:
-    from aqua_tcg.models.game import Battle, Player
+from aqua_tcg.models.game import Battle, Character, Player
 
 
 class ChallengeAcceptView(View):
@@ -86,7 +81,9 @@ class ChallengeAcceptView(View):
         )
 
     @discord.ui.button(label="Decline", style=discord.ButtonStyle.danger)
-    async def decline_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def decline_button(
+        self, interaction: discord.Interaction, _button: discord.ui.Button
+    ) -> None:
         if interaction.user.id != self.opponent.id:
             await interaction.response.send_message(
                 "You're not the challenged player.", ephemeral=True
@@ -228,7 +225,7 @@ class SwitchCharacterButton(discord.ui.Button):
 
 
 class CharacterSelectView(discord.ui.View):
-    def __init__(self, game_view: PvPGameView):
+    def __init__(self, game_view: PvPGameView) -> None:
         super().__init__(timeout=30)
         self.game_view = game_view
         self.player = game_view.game.player1 if game_view.player1_turn else game_view.game.player2
@@ -239,11 +236,11 @@ class CharacterSelectView(discord.ui.View):
 
 
 class SingleCharacterButton(discord.ui.Button):
-    def __init__(self, index: int, char_name: str):
+    def __init__(self, index: int, char_name: str) -> None:
         super().__init__(label=char_name, style=discord.ButtonStyle.primary)
         self.index = index
 
-    async def callback(self, interaction: discord.Interaction):
+    async def callback(self, interaction: discord.Interaction) -> None:
         game_view = self.view.game_view
         player = self.view.player
 

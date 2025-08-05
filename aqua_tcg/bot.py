@@ -9,6 +9,8 @@ from typing import TYPE_CHECKING
 import discord
 from discord.ext import commands, tasks
 
+from aqua_tcg.models.game_data import GameData
+
 from .utils.logger import setup_logging
 
 if TYPE_CHECKING:
@@ -24,6 +26,7 @@ class AquaBot(commands.Bot):
 
         self.initialised = False
         self.logger = logger
+        self.game_data = GameData()
 
     async def _load_cogs(self) -> None:
         for filepath in Path("aqua_tcg/cogs").glob("**/*.py"):

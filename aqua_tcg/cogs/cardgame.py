@@ -1,41 +1,40 @@
 from __future__ import annotations
 
 from collections import defaultdict
+from typing import TYPE_CHECKING
 
 import discord
 from discord import app_commands
 from discord.ext import commands
 
-from aqua_tcg.models.user import TCGUser
-from aqua_tcg.utils.reading_users import load_all_users, save_all_users
-
 from aqua_tcg.enums import Game
 from aqua_tcg.models.cards import Card
-from aqua_tcg.models.game import Battle, Character, Player
-from aqua_tcg.utils.reading_cards import read_cards
+from aqua_tcg.views.card_album_view import CardAlbumPaginator
+
+if TYPE_CHECKING:
+    from aqua_tcg.bot import AquaBot
+    from aqua_tcg.models.game_data import GameData
 
 
-class CardGame(commands.Cog):
-    def __init__(self, bot: commands.Bot) -> None:
+class CardGame(commands.GroupCog, name="cards"):
+    def __init__(self, bot: commands.Bot, game_data: GameData) -> None:
         self.bot = bot
-        self.cards = read_cards()
-        self.users = load_all_users()
+        self.game_data = game_data
 
-    @app_commands.command(name="my_cards", description="List all cards in a user's collection.")
+    @app_commands.command(name="my", description="List all cards in a user's collection.")
     async def list_user_cards(self, interaction: discord.Interaction) -> None:
         await interaction.response.defer()
 
         uid = str(interaction.user.id)
 
-        if uid not in self.users:
-            self.users[uid] = TCGUser()
-            save_all_users(self.users)
+        if uid not in self.game_data.users:
+            self.game_data.add_user(uid)
             await interaction.followup.send(
                 "You don't own any cards yet, but your Aqua TCG account has been created. Please use `/warp` or wait for `@axelotlramen` to implement this feature."
             )
             return
 
-        user = self.users[uid]
+        user = self.game_data.get_user(uid)
 
         if not user.owned_cards:
             await interaction.followup.send(
@@ -43,9 +42,18 @@ class CardGame(commands.Cog):
             )
             return
 
-    @app_commands.command(name="all_cards", description="List all available cards.")
+        embed = discord.Embed(
+            title=f"{interaction.user.display_name}'s Card Collection", color=discord.Color.green()
+        )
+
+        for card in user.owned_cards:
+            embed.add_field(name=card, value="", inline=False)
+
+        await interaction.followup.send(embed=embed)
+
+    @app_commands.command(name="all", description="List all available cards.")
     async def list_all_cards(self, interaction: discord.Interaction) -> None:
-        cards = self.cards
+        cards = self.game_data.cards
         if not cards:
             await interaction.response.send_message("No cards found.", ephemeral=True)
             return
@@ -69,25 +77,24 @@ class CardGame(commands.Cog):
 
         await interaction.response.send_message(embed=embed)
 
-    @app_commands.command(
-        name="play_game", description="Simulate a game between Kazuha and Furina."
-    )
-    async def play_game(self, interaction: discord.Interaction) -> None:
-        kazuha_card = self.cards["Kaedehara Kazuha"]
-        furina_card = self.cards["Furina"]
+    @app_commands.command(name="album", description="List cards in an album format.")
+    async def list_all_cards_album(self, interaction: discord.Interaction) -> None:
+        cards = self.game_data.cards
+        if not cards:
+            await interaction.response.send_message("No cards found.")
+            return
 
-        kazuha_character = Character(kazuha_card)
-        furina_character = Character(furina_card)
+        user = self.game_data.get_user(str(interaction.user.id))
 
-        player1 = Player(deck=[kazuha_character], active_character=kazuha_character)
-        player2 = Player(deck=[furina_character], active_character=furina_character)
+        if not user or not user.owned_cards:
+            await interaction.response.send_message(
+                "You don't own any cards yet. Please use `/warp` or wait for `@axelotlramen` to implement this feature."
+            )
+            return
 
-        game = Battle(player1, player2)
-        result = game.play_game()
-
-        # Respond with battle log
-        await interaction.response.send_message(f"**Battle Result:**\n```\n{result}\n```")
+        view = CardAlbumPaginator(user.owned_cards, cards)
+        await interaction.response.send_message(embed=view._get_embed(), view=view)
 
 
-async def setup(bot: commands.Bot) -> None:
-    await bot.add_cog(CardGame(bot))
+async def setup(bot: AquaBot) -> None:
+    await bot.add_cog(CardGame(bot, bot.game_data))

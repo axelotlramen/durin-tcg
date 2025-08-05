@@ -1,15 +1,12 @@
 from __future__ import annotations
 
-import importlib.util
 import json
 import os
 import pathlib
-import sys
-
-from aqua_tcg.models.user import TCGUser
-
 
 from dotenv import load_dotenv
+
+from aqua_tcg.models.user import TCGUser
 
 load_dotenv()
 USER_DATA_FILE = pathlib.Path(os.getenv("USER_DATA_FILE", "fallback.json"))
