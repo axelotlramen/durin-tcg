@@ -1,3 +1,7 @@
+"""
+Copies and Edited from Python-Discord-Bot-Template: https://github.com/kkrypt0nn/Python-Discord-Bot-Template/blob/main/bot.py
+"""
+
 from __future__ import annotations
 
 import logging

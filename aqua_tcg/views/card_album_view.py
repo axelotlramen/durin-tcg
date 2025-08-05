@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-import discord
-from discord import Interaction
-from discord.ui import Button, View
+from typing import TYPE_CHECKING
 
-from aqua_tcg.enums import CardAbility
-from aqua_tcg.models.cards import Card
-from aqua_tcg.models.game import Battle, Character, Player
+import discord
+from discord.ui import View
+
+if TYPE_CHECKING:
+    from aqua_tcg.models.cards import Card
 
 
 class CardAlbumPaginator(View):

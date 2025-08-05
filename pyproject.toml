@@ -1,7 +1,8 @@
 [project]
 authors = [{ name = "Axelle LNU", email = "aaposramennoodles@gmail.com" }]
 dependencies = [
-    "nextcord>=2.5.0",
+    "coloredlogs>=15.0.1",
+    "discord-py>=2.5.2",
     "pydantic>=2.8.2",
     "pydantic-settings>=2.10.1",
     "python-dotenv>=1.0.1",

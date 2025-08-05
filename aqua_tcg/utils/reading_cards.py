@@ -1,16 +1,13 @@
 from __future__ import annotations
 
 import importlib.util
-import os
 import pathlib
 import sys
 
-from dotenv import load_dotenv
+from aqua_tcg.config import CONFIG
+from aqua_tcg.models.cards import Card
 
-from ..models.cards import Card
-
-load_dotenv()
-CARD_ROOT = pathlib.Path(os.getenv("CARD_ROOT", "fallback.json"))
+CARD_ROOT = pathlib.Path(CONFIG.card_root)
 
 
 def read_cards() -> dict[str, Card]:
@@ -39,7 +36,7 @@ def read_cards() -> dict[str, Card]:
                     and attr is not Card
                     and attr.__name__ not in {"GenshinCard", "HSRCard", "ZZZCard"}
                 ):
-                    card_instance = attr()
+                    card_instance = attr()  # pyright: ignore[reportCallIssue]
                     all_cards[card_instance.name] = card_instance
 
     return all_cards
