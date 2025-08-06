@@ -2,6 +2,11 @@
 
 ![Durin TCG](https://github.com/user-attachments/assets/f564fae9-8706-453f-88e1-b1d1e501c1ca)
 
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/axelotlramen/aqua-tcg)
+![Lines of code](https://tokei.rs/b1/github/axelotlramen/aqua-tcg?style=flat&category=code&type=Python)
+![Commit activity](https://img.shields.io/github/commit-activity/w/axelotlramen/aqua-tcg/main)
+![GitHub](https://img.shields.io/github/license/axelotlramen/aqua-tcg)
+
 ### What is Durin?
 
 Durin was created because I really love the Genius Invocation TCG in Genshin Impact, and I also love Honkai: Star Rail and Zenless Zone Zero characters, so I decided to try to turn those characters into similar cards.
