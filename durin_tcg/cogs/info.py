@@ -7,6 +7,7 @@ from discord import app_commands
 from discord.ext import commands
 
 from durin_tcg.bot import DurinBot
+from durin_tcg.l10n import LocaleStr
 
 if TYPE_CHECKING:
     from durin_tcg.bot import DurinBot
@@ -18,7 +19,8 @@ class Info(commands.Cog):
 
     @app_commands.command(name="ping", description="Replies with pong!")
     async def ping(self, interaction: discord.Interaction) -> None:
-        await interaction.response.send_message(f"Pong! The latency is {self.bot.latency}.")
+        message = LocaleStr("info.ping", latency=self.bot.latency).translate(interaction.locale)
+        await interaction.response.send_message(message)
 
     @app_commands.command(name="help", description="Need help?")
     async def custom_help(self, interaction: discord.Interaction) -> None:

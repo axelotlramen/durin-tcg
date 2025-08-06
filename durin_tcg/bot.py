@@ -1,5 +1,5 @@
 """
-Copies and Edited from Python-Discord-Bot-Template: https://github.com/kkrypt0nn/Python-Discord-Bot-Template/blob/main/bot.py
+Copied and Edited from Python-Discord-Bot-Template: https://github.com/kkrypt0nn/Python-Discord-Bot-Template/blob/main/bot.py
 """
 
 from __future__ import annotations
@@ -15,13 +15,10 @@ from discord.ext import commands, tasks
 
 from durin_tcg.models.game_data import GameData
 
-from .utils.logger import setup_logging
+from .utils.logger import LOGGER
 
 if TYPE_CHECKING:
     from discord.ext.commands import Context
-
-setup_logging()
-logger = logging.getLogger(__name__)
 
 
 class DurinBot(commands.Bot):
@@ -29,7 +26,7 @@ class DurinBot(commands.Bot):
         super().__init__(command_prefix="a!", intents=discord.Intents.all(), help_command=None)
 
         self.initialised = False
-        self.logger = logger
+        self.logger = LOGGER
         self.game_data = GameData()
 
     async def _load_cogs(self) -> None:

@@ -57,6 +57,9 @@ class SingleEditDeckView(View):
         self.user = game_data.get_user(user_id)
         self.deck = self.user.decks[deck_index]
 
+        self.deck_name = self.deck.name
+        self.selected = self.deck.cards
+
         self.character_selects: list[EditableCharacterSelect] = []
 
         for i in range(4):
@@ -69,18 +72,11 @@ class SingleEditDeckView(View):
             self.add_item(select)
 
         self.add_item(ChangeDeckNameButton(parent_view=self))
+        self.add_item(SaveChangesButton(parent_view=self))
+        self.add_item(ResetChangesButton(parent_view=self))
 
-    def get_selected_characters(self) -> list[str]:
-        return [s.values[0] for s in self.character_selects if s.values]
-
-    async def update_deck(self, interaction: Interaction) -> None:
-        updated_chars = self.get_selected_characters()
-        self.deck.cards = updated_chars
-        self.game_data.save_users()
-
-        await interaction.response.send_message(
-            f"Deck updated: `{', '.join(updated_chars)}`", ephemeral=True
-        )
+    def edit_selected_deck(self, new_character: str, index: int) -> None:
+        self.selected[index] = new_character
 
 
 class EditableCharacterSelect(Select):
@@ -102,6 +98,7 @@ class EditableCharacterSelect(Select):
         )
 
     async def callback(self, interaction: Interaction) -> None:
+        self.parent_view.edit_selected_deck(self.values[0], self.index)
         await interaction.response.defer()
         # You could auto-update here if you want
 
@@ -132,9 +129,72 @@ class ChangeDeckNameModal(Modal, title="Rename Your Deck"):
         self.add_item(self.name_input)
 
     async def on_submit(self, interaction: Interaction) -> None:
-        self.parent_view.deck.name = self.name_input.value
+        self.parent_view.deck_name = self.name_input.value
+
+        await interaction.response.edit_message(
+            content=f"NOT SAVED: Deck name is **{self.parent_view.deck_name}**"
+        )
+
+
+class SaveChangesButton(Button):
+    def __init__(self, parent_view: SingleEditDeckView) -> None:
+        super().__init__(label="Save Changes", style=discord.ButtonStyle.success)
+        self.parent_view = parent_view
+
+    async def callback(self, interaction: Interaction) -> None:
+        if interaction.user.id != int(self.parent_view.user_id):
+            await interaction.response.send_message(
+                "You can't save changes for someone else's deck.", ephemeral=True
+            )
+            return
+
+        selected_chars = self.parent_view.selected
+        print(f"SELECTED CHARS ARE {selected_chars}")
+
+        if len(set(selected_chars)) < len(selected_chars):
+            await interaction.response.send_message(
+                "A deck cannot contain duplicate characters.", ephemeral=True
+            )
+            return
+
+        self.parent_view.deck.cards = selected_chars
+        self.parent_view.deck.name = self.parent_view.deck_name
         self.parent_view.game_data.save_users()
 
-        await interaction.response.send_message(
-            f"Deck name changed to **{self.name_input.value}**", ephemeral=True
+        for item in list(self.parent_view.children):
+            self.parent_view.remove_item(item)
+
+        await interaction.response.edit_message(
+            content=f"Deck updated to **{self.parent_view.deck.name}**: `{', '.join(selected_chars)}`"
+        )
+
+
+class ResetChangesButton(Button):
+    def __init__(self, parent_view: SingleEditDeckView) -> None:
+        super().__init__(label="Reset Changes", style=discord.ButtonStyle.danger)
+        self.parent_view = parent_view
+
+    async def callback(self, interaction: Interaction) -> None:
+        if interaction.user.id != int(self.parent_view.user_id):
+            await interaction.response.send_message(
+                "You can't reset someone else's deck.", ephemeral=True
+            )
+            return
+
+        # Remove old selects
+        for select in self.parent_view.character_selects:
+            self.parent_view.remove_item(select)
+
+        # Recreate selects from original deck
+        self.parent_view.character_selects.clear()
+        for i in range(4):
+            select = EditableCharacterSelect(
+                index=i, parent_view=self.parent_view, selected_char=self.parent_view.deck.cards[i]
+            )
+            self.parent_view.character_selects.append(select)
+            self.parent_view.add_item(select)
+
+        await interaction.response.edit_message(
+            content=f"Changes reset to original deck **{self.parent_view.deck.name}**: `{', '.join(self.parent_view.deck.cards)}`",
+            view=self.parent_view,
         )

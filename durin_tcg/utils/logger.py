@@ -32,7 +32,7 @@ def setup_logging() -> None:
 
     # File handler
     file_handler = logging.handlers.RotatingFileHandler(
-        filename="bot_activity.log",
+        filename="logs/bot_activity.log",
         encoding="utf-8",
         maxBytes=5 * 1024 * 1024,  # 5 MB
         backupCount=5,
@@ -42,3 +42,7 @@ def setup_logging() -> None:
 
     log.addHandler(file_handler)
     log.info("================== BOT STARTING UP ==================")
+
+
+setup_logging()
+LOGGER = logging.getLogger(__name__)

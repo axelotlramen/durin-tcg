@@ -6,6 +6,7 @@ dependencies = [
     "pydantic>=2.8.2",
     "pydantic-settings>=2.10.1",
     "python-dotenv>=1.0.1",
+    "pyyaml>=6.0.2",
 ]
 description = "An attempt to turn Hoyoverse characters into playable TCG characters like Genius Invocation TCG from Genshin Impact."
 license = { file = "LICENSE" }

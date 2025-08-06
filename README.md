@@ -28,12 +28,12 @@ This project is [MIT](LICENSE) licensed.
 
 ## Next Features to Implement
 
-- good card battling against players and AI
+- (HIGH PRIORITY) good card battling against players and AI
 - a shop for frames
 - a crafting system for frames
 - adding items in battles like Genshin TCG (may be hard)
 - group battles (if it's a thing)
-- change the name to During TCG
+- fix the localization (added a starter and then realized gameplay more important)
 
 ## Current Cards Implemented
 
