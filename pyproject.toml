@@ -9,7 +9,7 @@ dependencies = [
 ]
 description = "An attempt to turn Hoyoverse characters into playable TCG characters like Genius Invocation TCG from Genshin Impact."
 license = { file = "LICENSE" }
-name = "aqua-tcg"
+name = "durin-tcg"
 readme = "README.md"
 requires-python = ">=3.12"
 version = "0.1.0"

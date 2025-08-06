@@ -16,6 +16,7 @@ type Deployment = Literal["main", "sub"]
 class Config(BaseSettings):
     # Discord
     discord_token: str
+    test_guild_id: int
 
     # file routes
     user_data_file: str

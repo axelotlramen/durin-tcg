@@ -6,7 +6,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from durin_tcg.utils import read_cards
+from durin_tcg.utils.reading_cards import read_cards
 from durin_tcg.views.pvp_view import ChallengeAcceptView
 
 if TYPE_CHECKING:
