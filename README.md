@@ -1,5 +1,7 @@
 <h1 align="center"> Durin TCG </h1>
 
+[![Invite](https://img.shields.io/badge/Add%20the%20bot-%235865F2.svg?style=for-the-badge&logo=discord&logoColor=white)](https://discord.com/oauth2/authorize?client_id=1296536262446026794&permissions=2151017472&integration_type=0&scope=applications.commands+bot)
+
 ![Durin TCG](https://github.com/user-attachments/assets/f564fae9-8706-453f-88e1-b1d1e501c1ca)
 
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/axelotlramen/aqua-tcg)
