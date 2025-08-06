@@ -7,10 +7,11 @@ from discord.ui import Select, View
 
 if TYPE_CHECKING:
     from aqua_tcg.models.game_data import GameData
+    from aqua_tcg.models.user import CardDeck
 
 
 class DeleteDeckView(View):
-    def __init__(self, user_id: str, game_data: GameData, decks: list[list[str]]) -> None:
+    def __init__(self, user_id: str, game_data: GameData, decks: list[CardDeck]) -> None:
         super().__init__(timeout=60)
         self.user_id = user_id
         self.game_data = game_data
@@ -24,7 +25,11 @@ class DeleteDeckSelect(Select):
         self.parent_view = parent_view
 
         options = [
-            SelectOption(label=f"Deck {i + 1}", value=str(i)) for i in range(len(parent_view.decks))
+            SelectOption(
+                label=f"Deck {deck_num + 1} ({deck.name}): {', '.join(deck.cards)}",
+                value=str(deck_num),
+            )
+            for deck_num, deck in enumerate(self.parent_view.decks)
         ]
 
         super().__init__(

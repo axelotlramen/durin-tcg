@@ -17,6 +17,15 @@ This project is [MIT](LICENSE) licensed.
 - This project would not have been made without all of the [dependencies](pyproject.toml) by the wonderful open source community.
 - The structure of this repository is heavily inspired by [Stelle Music](https://github.com/Ganyu-Studios/stelle-music) and [Hoyo Buddy](https://github.com/seriaati/hoyo-buddy).
 
+## Next Features to Implement
+
+- good card battling against players and AI
+- a shop for frames
+- a crafting system for frames
+- adding items in battles like Genshin TCG (may be hard)
+- group battles (if it's a thing)
+- change the name to During TCG
+
 ## Current Cards Implemented
 
 - Genshin: Freminet, Furina, Hu Tao, Kazuha, Wriothesley

@@ -1,3 +1,3 @@
-[submodule "aqua-tcg-assets"]
-	path = aqua-tcg-assets
-	url = git@github-personal:axelotlramen/aqua-tcg-assets.git
+[submodule "aqua_tcg_assets"]
+	path = aqua_tcg_assets
+	url = git@github.com:axelotlramen/aqua-tcg-assets.git

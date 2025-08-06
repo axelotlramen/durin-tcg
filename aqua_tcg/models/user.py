@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field
 
 
 class CardDeck(BaseModel):
+    name: str = "Untitled Deck"
     cards: list[str] = Field(default_factory=list)
 
 

@@ -3,11 +3,12 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import discord
-from discord import app_commands
+from discord import SelectOption, app_commands
 from discord.ext import commands
 
 from aqua_tcg.views.decks.deck_add_view import DeckAddView
 from aqua_tcg.views.decks.deck_delete_view import DeleteDeckView
+from aqua_tcg.views.decks.deck_edit_view import EditDeckView
 
 if TYPE_CHECKING:
     from aqua_tcg.bot import AquaBot
@@ -45,7 +46,11 @@ class Deckbuilding(commands.GroupCog, name="decks"):
         )
 
         for deck_num, deck in enumerate(user.decks):
-            embed.add_field(name=f"Deck {deck_num + 1}", value=", ".join(deck.cards), inline=False)
+            embed.add_field(
+                name=f"Deck {deck_num + 1}: {deck.name}",
+                value=f"`{', '.join(deck.cards)}`",
+                inline=False,
+            )
 
         await interaction.followup.send(embed=embed)
 
@@ -88,10 +93,24 @@ class Deckbuilding(commands.GroupCog, name="decks"):
             await interaction.response.send_message("You have no decks to delete.")
             return
 
-        decks = [deck.cards for deck in user.decks]
+        decks = user.decks
         view = DeleteDeckView(uid, self.game_data, decks)
 
         await interaction.response.send_message(content="Select a deck to delete:", view=view)
+
+    @app_commands.command(name="edit_deck", description="Edit one of your existing decks.")
+    async def edit_deck(self, interaction: discord.Interaction) -> None:
+        uid = str(interaction.user.id)
+        user = self.game_data.get_user(uid)
+
+        if not user.decks:
+            await interaction.response.send_message("You have no decks to edit.")
+            return
+
+        decks = user.decks
+        view = EditDeckView(uid, self.game_data, decks)
+
+        await interaction.response.send_message("Select a deck to edit:", view=view)
 
 
 async def setup(bot: AquaBot) -> None:

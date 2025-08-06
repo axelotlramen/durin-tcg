@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 import discord
 from discord import Interaction, SelectOption
-from discord.ui import Select, View
+from discord.ui import Modal, Select, TextInput, View
 
 from aqua_tcg.models.user import CardDeck
 
@@ -19,6 +19,7 @@ class DeckAddView(View):
         self.user_id = user_id
         self.game_data = game_data
         self.selected: list[str] = []
+        self.deck_name: str = ""
 
         self.selects: list[DeckCharacterSelect] = []
 
@@ -32,11 +33,8 @@ class DeckAddView(View):
             self.add_item(select)
 
     async def finish_deck(self, interaction: Interaction) -> None:
-        confirm_view = ConfirmCancelView(self, interaction.user)
-        await interaction.response.edit_message(
-            content=f"You selected: {', '.join(self.selected)}.\nDo you want to save this as a deck?",
-            view=confirm_view,
-        )
+        modal = DeckNameModal(self)
+        await interaction.response.send_modal(modal)
 
 
 class DeckCharacterSelect(Select):
@@ -80,11 +78,32 @@ class DeckCharacterSelect(Select):
             ]
 
             await interaction.response.edit_message(
-                content=f"Selected {', '.join(self.parent.selected)}. Choose the next character.",
+                content=f"Selected `{', '.join(self.parent.selected)}`. Choose the next character.",
                 view=self.parent,
             )
         else:
             await self.parent.finish_deck(interaction)
+
+
+class DeckNameModal(Modal, title="Name Your Deck"):
+    def __init__(self, parent: DeckAddView) -> None:
+        super().__init__(timeout=60)
+        self.parent = parent
+
+        self.deck_name_input = TextInput(
+            label="Deck Name", placeholder="Enter a name for your deck", max_length=30
+        )
+
+        self.add_item(self.deck_name_input)
+
+    async def on_submit(self, interaction: Interaction) -> None:
+        self.parent.deck_name = self.deck_name_input.value
+
+        confirm_view = ConfirmCancelView(self.parent, interaction.user)
+        await interaction.response.edit_message(
+            content=f"You selected: `{', '.join(self.parent.selected)}` and named it `{self.parent.deck_name}`.\nDo you want to save this as a deck?",
+            view=confirm_view,
+        )
 
 
 class ConfirmCancelView(View):
@@ -110,11 +129,12 @@ class ConfirmCancelView(View):
             self.parent.stop()
             return
 
-        user.decks.append(CardDeck(cards=self.parent.selected))
+        user.decks.append(CardDeck(name=self.parent.deck_name, cards=self.parent.selected))
         self.parent.game_data.save_users()
 
         await interaction.response.edit_message(
-            content=f"Deck created with: {', '.join(self.parent.selected)}", view=None
+            content=f"Deck `{self.parent.deck_name}`created with: `{', '.join(self.parent.selected)}`",
+            view=None,
         )
         self.parent.stop()
         self.stop()
