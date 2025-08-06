@@ -1,8 +1,10 @@
-<h1 align="center"> Aqua TCG </h1>
+<h1 align="center"> Durin TCG </h1>
 
-### What is Aqua?
+![Durin TCG](https://github.com/user-attachments/assets/f564fae9-8706-453f-88e1-b1d1e501c1ca)
 
-Aqua was created because I really love the Genius Invocation TCG in Genshin Impact, and I also love Honkai: Star Rail and Zenless Zone Zero characters, so I decided to try to turn those characters into similar cards.
+### What is Durin?
+
+Durin was created because I really love the Genius Invocation TCG in Genshin Impact, and I also love Honkai: Star Rail and Zenless Zone Zero characters, so I decided to try to turn those characters into similar cards.
 
 ## License
 
