@@ -4,8 +4,8 @@ import importlib.util
 import pathlib
 import sys
 
-from aqua_tcg.config import CONFIG
-from aqua_tcg.models.cards import Card
+from durin_tcg.config import CONFIG
+from durin_tcg.models.cards import Card
 
 CARD_ROOT = pathlib.Path(CONFIG.card_root)
 

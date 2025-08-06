@@ -1,13 +1,16 @@
-import discord
-from discord.ui import View, Select, Button, Modal, TextInput
-from discord import Interaction, SelectOption
+from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
-from aqua_tcg.models.user import CardDeck
-from aqua_tcg.models.game_data import GameData
+import discord
+from discord import Interaction, SelectOption
+from discord.ui import Button, Modal, Select, TextInput, View
+
+from durin_tcg.models.game_data import GameData
 
 if TYPE_CHECKING:
-    from aqua_tcg.models.game_data import GameData
+    from durin_tcg.models.game_data import GameData
+    from durin_tcg.models.user import CardDeck
 
 
 class EditDeckView(View):

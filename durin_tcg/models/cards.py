@@ -2,15 +2,15 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from aqua_tcg.constants import CARD_BASIC_ATTACK, CARD_SKILL_ATTACK, CARD_ULTIMATE_ATTACK
-from aqua_tcg.enums import Game
-from aqua_tcg.exceptions import InvalidAbilityUseError
+from durin_tcg.constants import CARD_BASIC_ATTACK, CARD_SKILL_ATTACK, CARD_ULTIMATE_ATTACK
+from durin_tcg.enums import Game
+from durin_tcg.exceptions import InvalidAbilityUseError
 
 if TYPE_CHECKING:
     from collections.abc import Callable
 
-    from aqua_tcg.enums import CardElement
-    from aqua_tcg.models.game import Character, Player
+    from durin_tcg.enums import CardElement
+    from durin_tcg.models.game import Character, Player
 
 
 class Ability:

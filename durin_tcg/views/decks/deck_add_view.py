@@ -6,10 +6,10 @@ import discord
 from discord import Interaction, SelectOption
 from discord.ui import Modal, Select, TextInput, View
 
-from aqua_tcg.models.user import CardDeck
+from durin_tcg.models.user import CardDeck
 
 if TYPE_CHECKING:
-    from aqua_tcg.models.game_data import GameData
+    from durin_tcg.models.game_data import GameData
 
 
 class DeckAddView(View):

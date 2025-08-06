@@ -3,8 +3,8 @@ from __future__ import annotations
 import json
 import pathlib
 
-from aqua_tcg.config import CONFIG
-from aqua_tcg.models.user import TCGUser
+from durin_tcg.config import CONFIG
+from durin_tcg.models.user import TCGUser
 
 USER_DATA_FILE = pathlib.Path(CONFIG.user_data_file)
 

@@ -4,11 +4,11 @@ import random
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
-from aqua_tcg.constants import CARD_BASE_HP
-from aqua_tcg.enums import CardAbility
+from durin_tcg.constants import CARD_BASE_HP
+from durin_tcg.enums import CardAbility
 
 if TYPE_CHECKING:
-    from aqua_tcg.models.cards import Card
+    from durin_tcg.models.cards import Card
 
 
 class Character:

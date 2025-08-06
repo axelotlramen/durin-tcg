@@ -6,11 +6,11 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from aqua_tcg.utils import read_cards
-from aqua_tcg.views.pvp_view import ChallengeAcceptView
+from durin_tcg.utils import read_cards
+from durin_tcg.views.pvp_view import ChallengeAcceptView
 
 if TYPE_CHECKING:
-    from aqua_tcg.bot import AquaBot
+    from durin_tcg.bot import DurinBot
 
 
 class Battling(commands.GroupCog, name="battle"):
@@ -39,5 +39,5 @@ class Battling(commands.GroupCog, name="battle"):
         view.message = await interaction.original_response()
 
 
-async def setup(bot: AquaBot) -> None:
+async def setup(bot: DurinBot) -> None:
     await bot.add_cog(Battling(bot))

@@ -3,20 +3,20 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import discord
-from discord import SelectOption, app_commands
+from discord import app_commands
 from discord.ext import commands
 
-from aqua_tcg.views.decks.deck_add_view import DeckAddView
-from aqua_tcg.views.decks.deck_delete_view import DeleteDeckView
-from aqua_tcg.views.decks.deck_edit_view import EditDeckView
+from durin_tcg.views.decks.deck_add_view import DeckAddView
+from durin_tcg.views.decks.deck_delete_view import DeleteDeckView
+from durin_tcg.views.decks.deck_edit_view import EditDeckView
 
 if TYPE_CHECKING:
-    from aqua_tcg.bot import AquaBot
-    from aqua_tcg.models.game_data import GameData
+    from durin_tcg.bot import DurinBot
+    from durin_tcg.models.game_data import GameData
 
 
 class Deckbuilding(commands.GroupCog, name="decks"):
-    def __init__(self, bot: AquaBot, game_data: GameData) -> None:
+    def __init__(self, bot: DurinBot, game_data: GameData) -> None:
         self.bot = bot
         self.game_data = game_data
 
@@ -29,7 +29,7 @@ class Deckbuilding(commands.GroupCog, name="decks"):
         if uid not in self.game_data.users:
             self.game_data.add_user(uid)
             await interaction.followup.send(
-                "You don't own any cards yet, but your Aqua TCG account has been created. Please use `/warp` or wait for `@axelotlramen` to implement this feature."
+                "You don't own any cards yet, but your Durin TCG account has been created. Please use `/warp` or wait for `@axelotlramen` to implement this feature."
             )
             return
 
@@ -61,7 +61,7 @@ class Deckbuilding(commands.GroupCog, name="decks"):
         if uid not in self.game_data.users:
             self.game_data.add_user(uid)
             await interaction.response.send_message(
-                "You don't own any cards yet, but your Aqua TCG account has been created. Please use `/warp` to get some cards."
+                "You don't own any cards yet, but your Durin TCG account has been created. Please use `/warp` to get some cards."
             )
             return
 
@@ -113,5 +113,5 @@ class Deckbuilding(commands.GroupCog, name="decks"):
         await interaction.response.send_message("Select a deck to edit:", view=view)
 
 
-async def setup(bot: AquaBot) -> None:
+async def setup(bot: DurinBot) -> None:
     await bot.add_cog(Deckbuilding(bot, bot.game_data))

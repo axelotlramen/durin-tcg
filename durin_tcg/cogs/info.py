@@ -6,10 +6,10 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from aqua_tcg.bot import AquaBot
+from durin_tcg.bot import DurinBot
 
 if TYPE_CHECKING:
-    from aqua_tcg.bot import AquaBot
+    from durin_tcg.bot import DurinBot
 
 
 class Info(commands.Cog):
@@ -30,6 +30,6 @@ class Info(commands.Cog):
         await interaction.response.send_message(embed=embed)
 
 
-async def setup(bot: AquaBot) -> None:
+async def setup(bot: DurinBot) -> None:
     bot.remove_command("help")
     await bot.add_cog(Info(bot))

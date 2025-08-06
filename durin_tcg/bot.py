@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING
 import discord
 from discord.ext import commands, tasks
 
-from aqua_tcg.models.game_data import GameData
+from durin_tcg.models.game_data import GameData
 
 from .utils.logger import setup_logging
 
@@ -24,7 +24,7 @@ setup_logging()
 logger = logging.getLogger(__name__)
 
 
-class AquaBot(commands.Bot):
+class DurinBot(commands.Bot):
     def __init__(self) -> None:
         super().__init__(command_prefix="a!", intents=discord.Intents.all(), help_command=None)
 
@@ -33,11 +33,11 @@ class AquaBot(commands.Bot):
         self.game_data = GameData()
 
     async def _load_cogs(self) -> None:
-        for filepath in Path("aqua_tcg/cogs").glob("**/*.py"):
+        for filepath in Path("durin_tcg/cogs").glob("**/*.py"):
             extension = Path(filepath).stem
 
             try:
-                await self.load_extension(f"aqua_tcg.cogs.{extension}")
+                await self.load_extension(f"durin_tcg.cogs.{extension}")
                 self.logger.info("Loaded extension '%s'", extension)
             except Exception as e:
                 exception = f"{type(e).__name__}: {e}"

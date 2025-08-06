@@ -6,7 +6,7 @@ import discord
 from discord.ui import View
 
 if TYPE_CHECKING:
-    from aqua_tcg.models.cards import Card
+    from durin_tcg.models.cards import Card
 
 
 class CardAlbumPaginator(View):

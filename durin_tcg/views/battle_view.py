@@ -4,15 +4,15 @@ import discord
 from discord import Interaction
 from discord.ui import Button, View
 
-from aqua_tcg.enums import CardAbility
-from aqua_tcg.models.game import Battle, Character, Player
+from durin_tcg.enums import CardAbility
+from durin_tcg.models import AIPlayer, Battle, Character, Player
 
 
-class ChallengeAcceptView(View):
+class InitialBattleView(View):
     def __init__(
         self,
         challenger: discord.User | discord.Member,
-        opponent: discord.User | discord.Member,
+        opponent: discord.User | discord.Member | AIPlayer,
         cards: dict,
     ) -> None:
         super().__init__(timeout=15)

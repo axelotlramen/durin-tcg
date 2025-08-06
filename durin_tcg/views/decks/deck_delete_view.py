@@ -6,8 +6,8 @@ from discord import Interaction, SelectOption
 from discord.ui import Select, View
 
 if TYPE_CHECKING:
-    from aqua_tcg.models.game_data import GameData
-    from aqua_tcg.models.user import CardDeck
+    from durin_tcg.models.game_data import GameData
+    from durin_tcg.models.user import CardDeck
 
 
 class DeleteDeckView(View):

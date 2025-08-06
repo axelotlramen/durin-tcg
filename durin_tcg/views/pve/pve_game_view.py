@@ -4,8 +4,8 @@ import discord
 from discord import Interaction
 from discord.ui import Button, View
 
-from aqua_tcg.enums import CardAbility
-from aqua_tcg.models import AIPlayer, Battle, Player
+from durin_tcg.enums import CardAbility
+from durin_tcg.models.game import AIPlayer, Battle, Player
 
 
 class PvEGameView(View):

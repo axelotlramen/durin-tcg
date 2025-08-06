@@ -7,13 +7,13 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from aqua_tcg.enums import Game
-from aqua_tcg.models.cards import Card
-from aqua_tcg.views.card_album_view import CardAlbumPaginator
+from durin_tcg.enums import Game
+from durin_tcg.models.cards import Card
+from durin_tcg.views.card_album_view import CardAlbumPaginator
 
 if TYPE_CHECKING:
-    from aqua_tcg.bot import AquaBot
-    from aqua_tcg.models.game_data import GameData
+    from durin_tcg.bot import DurinBot
+    from durin_tcg.models.game_data import GameData
 
 
 class CardGame(commands.GroupCog, name="cards"):
@@ -30,7 +30,7 @@ class CardGame(commands.GroupCog, name="cards"):
         if uid not in self.game_data.users:
             self.game_data.add_user(uid)
             await interaction.followup.send(
-                "You don't own any cards yet, but your Aqua TCG account has been created. Please use `/warp` to get some cards."
+                "You don't own any cards yet, but your Durin TCG account has been created. Please use `/warp` to get some cards."
             )
             return
 
@@ -96,5 +96,5 @@ class CardGame(commands.GroupCog, name="cards"):
         await interaction.response.send_message(embed=view._get_embed(), view=view)
 
 
-async def setup(bot: AquaBot) -> None:
+async def setup(bot: DurinBot) -> None:
     await bot.add_cog(CardGame(bot, bot.game_data))

@@ -6,10 +6,10 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import Context
 
-from aqua_tcg.bot import AquaBot
+from durin_tcg.bot import DurinBot
 
 if TYPE_CHECKING:
-    from aqua_tcg.bot import AquaBot
+    from durin_tcg.bot import DurinBot
 
 
 class Admin(commands.Cog):
@@ -27,6 +27,6 @@ class Admin(commands.Cog):
         await context.send(embed=embed)
 
 
-async def setup(bot: AquaBot) -> None:
+async def setup(bot: DurinBot) -> None:
     bot.remove_command("help")
     await bot.add_cog(Admin(bot))
