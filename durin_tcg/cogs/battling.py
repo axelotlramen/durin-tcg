@@ -1,22 +1,32 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal
 
 import discord
 from discord import app_commands
 from discord.ext import commands
 
-from durin_tcg.utils.reading_cards import read_cards
-from durin_tcg.views.pvp_view import ChallengeAcceptView
+from durin_tcg.commands.battling import BattleCommand
 
 if TYPE_CHECKING:
     from durin_tcg.bot import DurinBot
+    from durin_tcg.models.game_data import GameData
 
 
 class Battling(commands.GroupCog, name="battle"):
-    def __init__(self, bot: commands.Bot) -> None:
+    def __init__(self, bot: commands.Bot, game_data: GameData) -> None:
         self.bot = bot
-        self.cards = read_cards()
+        self.game_data = game_data
+
+    @app_commands.command(name="profile", description="See your battle profile")
+    async def battle_profile(self, interaction: discord.Interaction) -> None:
+        await interaction.response.send_message(
+            content="This command hasn't been edited yet, but soon! Haha."
+        )
+
+    @app_commands.command(name="ai", description="Challenge an AI.")
+    async def challenge_ai(self, interaction: discord.Interaction) -> None:
+        await self._battle_command(interaction, "AI")
 
     @app_commands.command(name="player", description="Challenge another player")
     @app_commands.describe(opponent="The user you want to challenge.")
@@ -27,17 +37,17 @@ class Battling(commands.GroupCog, name="battle"):
             await interaction.response.send_message("You can't challenge yourself.", ephemeral=True)
             return
 
-        embed = discord.Embed(
-            title="Battle Challenge",
-            description=f"{interaction.user.mention} has challenged {opponent.mention} to a duel!",
-            color=discord.Color.orange(),
+        await self._battle_command(interaction, opponent)
+
+    async def _battle_command(
+        self, interaction: discord.Interaction, opponent: discord.User | Literal["AI"]
+    ) -> None:
+        command = BattleCommand(
+            challenger=interaction.user, opponent=opponent, game_data=self.game_data
         )
 
-        view = ChallengeAcceptView(challenger=interaction.user, opponent=opponent, cards=self.cards)
-
-        await interaction.response.send_message(embed=embed, view=view)
-        view.message = await interaction.original_response()
+        await command.send_invite(interaction)
 
 
 async def setup(bot: DurinBot) -> None:
-    await bot.add_cog(Battling(bot))
+    await bot.add_cog(Battling(bot, bot.game_data))

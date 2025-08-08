@@ -1,8 +1,10 @@
-from typing import Any, Self
-import yaml
-import os
-from discord import Locale
+from __future__ import annotations
+
 import pathlib
+from typing import Any
+
+import yaml
+from discord import Locale
 
 from durin_tcg.utils.logger import LOGGER
 
@@ -48,7 +50,7 @@ class Translator:
         source_string = self._l10n[DEFAULT_LANG].get(string.key)
 
         if string.translate_ and source_string is None:
-            self.logger.warning(f"String {string.key!r} is missing in source lang file")
+            self.logger.warning("String %r is missing in source lang file", string.key)
 
         lang = locale.value.replace("-", "_")
         translation = self._l10n.get(lang, {}).get(string.key)

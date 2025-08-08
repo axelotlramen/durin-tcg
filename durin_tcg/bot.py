@@ -4,7 +4,6 @@ Copied and Edited from Python-Discord-Bot-Template: https://github.com/kkrypt0nn
 
 from __future__ import annotations
 
-import logging
 import os
 import platform
 from pathlib import Path

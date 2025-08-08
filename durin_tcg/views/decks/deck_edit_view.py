@@ -149,7 +149,6 @@ class SaveChangesButton(Button):
             return
 
         selected_chars = self.parent_view.selected
-        print(f"SELECTED CHARS ARE {selected_chars}")
 
         if len(set(selected_chars)) < len(selected_chars):
             await interaction.response.send_message(
@@ -161,12 +160,18 @@ class SaveChangesButton(Button):
         self.parent_view.deck.name = self.parent_view.deck_name
         self.parent_view.game_data.save_users()
 
+        for select in self.parent_view.character_selects:
+            select.disabled = True
+
         for item in list(self.parent_view.children):
-            self.parent_view.remove_item(item)
+            if isinstance(item, Button):
+                self.parent_view.remove_item(item)
 
         await interaction.response.edit_message(
-            content=f"Deck updated to **{self.parent_view.deck.name}**: `{', '.join(selected_chars)}`"
+            content=f"Deck successfully updated to **{self.parent_view.deck.name}**: `{', '.join(selected_chars)}`",
+            view=self.parent_view,
         )
+        self.parent_view.stop()
 
 
 class ResetChangesButton(Button):
