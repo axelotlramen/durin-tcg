@@ -48,6 +48,6 @@ class CardDamageType(StrEnum):
     ICE = "Ice"
     ELECTRICITY = "Electricity"
     AIR = "Air"
-    EARTH = "Earth"
     PLANT = "Plant"
     AURA = "Aura"
+    PHYSICAL = "Physical"

@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
 from durin_tcg.constants import CARD_BASE_HP
-from durin_tcg.enums import CardAbility
+from durin_tcg.enums import CardAbility, CardDamageType, CardElement
 
 if TYPE_CHECKING:
     from durin_tcg.models.cards import Card
@@ -16,8 +16,12 @@ class Character:
         self.card = card
         self.current_hp = current_hp
         self.current_shield: int = 0
+        self.afflicted_elements: list[CardDamageType] = []
 
         self.final_hp: int = self.current_hp + self.current_shield
+
+    def afflict_element(self, element: CardDamageType) -> None:
+        self.afflicted_elements.append(element)
 
 
 class Item(ABC):

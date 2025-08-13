@@ -2,6 +2,9 @@ from __future__ import annotations
 
 from durin_tcg.enums import CardDamageType, CardElement
 
+EMBED_TIMEOUT = 60
+TURN_TIME_LIMIT = 15
+
 CARD_BASE_HP = 10
 CARD_BASIC_ATTACK = 1
 CARD_SKILL_ATTACK = 3
@@ -14,10 +17,10 @@ CARD_ELEMENT_TO_DAMAGE_TYPE = {
     CardElement.GI_CRYO: CardDamageType.ICE,
     CardElement.GI_ELECTRO: CardDamageType.ELECTRICITY,
     CardElement.GI_ANEMO: CardDamageType.AIR,
-    CardElement.GI_GEO: CardDamageType.EARTH,
+    CardElement.GI_GEO: CardDamageType.PHYSICAL,
     CardElement.GI_DENDRO: CardDamageType.PLANT,
     # HSR elements
-    CardElement.HSR_PHYSICAL: CardDamageType.EARTH,
+    CardElement.HSR_PHYSICAL: CardDamageType.PHYSICAL,
     CardElement.HSR_WIND: CardDamageType.AIR,
     CardElement.HSR_FIRE: CardDamageType.FIRE,
     CardElement.HSR_ICE: CardDamageType.ICE,
@@ -29,5 +32,5 @@ CARD_ELEMENT_TO_DAMAGE_TYPE = {
     CardElement.ZZZ_ETHER: CardDamageType.AURA,
     CardElement.ZZZ_FIRE: CardDamageType.FIRE,
     CardElement.ZZZ_ICE: CardDamageType.ICE,
-    CardElement.ZZZ_PHYSICAL: CardDamageType.EARTH,
+    CardElement.ZZZ_PHYSICAL: CardDamageType.PHYSICAL,
 }

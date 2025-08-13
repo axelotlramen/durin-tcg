@@ -6,16 +6,24 @@ import discord
 from discord import Interaction, SelectOption
 from discord.ui import Button, Modal, Select, TextInput, View
 
+from durin_tcg.constants import EMBED_TIMEOUT
 from durin_tcg.models.game_data import GameData
+from durin_tcg.views.base import BaseView
 
 if TYPE_CHECKING:
     from durin_tcg.models.game_data import GameData
     from durin_tcg.models.user import CardDeck
 
 
-class EditDeckView(View):
-    def __init__(self, user_id: str, game_data: GameData, decks: list[CardDeck]) -> None:
-        super().__init__(timeout=60)
+class EditDeckView(BaseView):
+    def __init__(
+        self,
+        user_id: str,
+        game_data: GameData,
+        decks: list[CardDeck],
+        timeout: float = EMBED_TIMEOUT,
+    ) -> None:
+        super().__init__(timeout=timeout)
         self.user_id = user_id
         self.game_data = game_data
         self.decks = decks

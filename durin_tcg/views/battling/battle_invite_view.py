@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-import contextlib
 from typing import TYPE_CHECKING
 
 import discord
 from discord import Embed, Interaction
-from discord.ui import Button, View
+from discord.ui import Button
 
+from durin_tcg.constants import EMBED_TIMEOUT
+from durin_tcg.views.base import BaseView
 from durin_tcg.views.battling.switch_deck_view import SwitchDeckView
 
 if TYPE_CHECKING:
@@ -14,12 +15,12 @@ if TYPE_CHECKING:
     from durin_tcg.models.user import CardDeck
 
 
-class BattleInviteView(View):
+class BattleInviteView(BaseView):
     def __init__(
         self,
         user: discord.User | discord.Member,
         battle_command: BattleCommand,
-        timeout: float = 60,
+        timeout: float = EMBED_TIMEOUT,
     ) -> None:
         super().__init__(timeout=timeout)
 
@@ -28,6 +29,8 @@ class BattleInviteView(View):
 
         self.selected_deck_index = self._get_selected_deck_index()
         self.selected_deck = self._get_selected_deck()
+
+        self.message: discord.Message | None = None
 
         self.add_item(SwitchDeckButton())
         self.add_item(SendInviteButton())
@@ -57,8 +60,10 @@ class BattleInviteView(View):
 
         try:
             await interaction.response.send_message(embed=embed, view=self)
+            self.message = await interaction.original_response()
         except discord.InteractionResponded:
             await interaction.followup.send(embed=embed, view=self)
+            self.message = await interaction.original_response()
 
 
 class SwitchDeckButton(Button):
@@ -85,17 +90,17 @@ class SendInviteButton(Button):
 
     async def callback(self, interaction: discord.Interaction) -> None:
         view: BattleInviteView = self.view  # pyright: ignore[reportAssignmentType]
+
+        for child in view.children:
+            if isinstance(child, Button):
+                child.disabled = True
+
+        await interaction.response.edit_message(content="Battle started!", embed=None, view=view)
+
         if view.battle_command.opponent == "AI":
             new_view = await view.battle_command.run_ai()
         else:
             new_view = await view.battle_command.run_player()
 
-        with contextlib.suppress(discord.NotFound):
-            await interaction.message.edit(  # pyright: ignore[reportOptionalMemberAccess]
-                content="Battle invitation successfully sent!", view=None, embed=None
-            )
-
-        try:
-            await interaction.response.send_message(content="Battle begins!", view=new_view)
-        except discord.InteractionResponded:
-            await interaction.followup.send(content="Battle begins!", view=new_view)
+        await new_view.update_ui(interaction)
+        view.stop()

@@ -35,7 +35,10 @@ class BattleCommand:
         player2 = self._get_player(self.opponent)
         battle = Battle(player1, player2)
         return PlayerBattleView(
-            player1=self.challenger, player2=self.opponent, game=battle, game_data=self.game_data
+            challenger=self.challenger,
+            opponent=self.opponent,
+            game=battle,
+            game_data=self.game_data,
         )
 
     async def run_ai(self) -> BattleView:
@@ -45,9 +48,7 @@ class BattleCommand:
         player1 = self._get_player(self.challenger)
         player2 = self._generate_ai_player()
         battle = Battle(player1, player2)
-        return AIBattleView(
-            player=self.challenger, ai=player2, game=battle, game_data=self.game_data
-        )
+        return AIBattleView(challenger=self.challenger, game=battle, game_data=self.game_data)
 
     def switch_deck(self, user: discord.User | discord.Member, new_deck_index: int) -> None:
         user_data = self.game_data.get_user(str(user.id))

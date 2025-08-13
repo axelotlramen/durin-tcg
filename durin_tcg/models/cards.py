@@ -1,9 +1,14 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal
 
-from durin_tcg.constants import CARD_BASIC_ATTACK, CARD_SKILL_ATTACK, CARD_ULTIMATE_ATTACK
-from durin_tcg.enums import Game
+from durin_tcg.constants import (
+    CARD_BASIC_ATTACK,
+    CARD_ELEMENT_TO_DAMAGE_TYPE,
+    CARD_SKILL_ATTACK,
+    CARD_ULTIMATE_ATTACK,
+)
+from durin_tcg.enums import CardDamageType, Game
 from durin_tcg.exceptions import InvalidAbilityUseError
 
 if TYPE_CHECKING:
@@ -18,38 +23,35 @@ class Ability:
         self,
         name: str,
         desc: str,
-        element: CardElement,
+        damage_type: CardDamageType,
         damage_number: int,
-        target: str = "enemy",
-        use_func: Callable[[list[Character], Player], None] | None = None,
+        add_func: Callable[[list[Character], Player], None] | None = None,
+        ability_type: Literal["attack", "buff"] = "attack",
     ) -> None:
         self.name = name
         self.desc = desc
-        self.element = element
+        self.damage_type = damage_type
         self.damage_number = damage_number
-        self.target = target
 
-        if use_func is not None:
-            self._use_func = use_func
-        else:
-            self._use_func = self.default_use
+        self.add_func = add_func
+        self.ability_type = ability_type
 
-    def default_use(self, allies: list[Character], enemy: Player) -> None:
-        if self.target == "enemy":
-            enemy_active = enemy.active_character
-            damage = self.damage_number
+    def default_attack(self, _allies: list[Character], enemy: Player) -> None:
+        enemy_active = enemy.active_character
+        damage = self.damage_number
+        enemy_active.afflict_element(self.damage_type)
 
-            if enemy_active.current_shield > 0:
-                if damage <= enemy_active.current_shield:
-                    enemy_active.current_shield -= damage
-                    damage = 0
-                else:
-                    damage -= enemy_active.current_shield
-                    enemy_active.current_shield = 0
+        if enemy_active.current_shield > 0:
+            if damage <= enemy_active.current_shield:
+                enemy_active.current_shield -= damage
+                damage = 0
+            else:
+                damage -= enemy_active.current_shield
+                enemy_active.current_shield = 0
 
-            enemy_active.current_hp = max(enemy_active.current_hp - damage, 0)
-            return
+        enemy_active.current_hp = max(enemy_active.current_hp - damage, 0)
 
+    def default_buff(self, allies: list[Character], _enemy: Player) -> None:
         live_allies = [a for a in allies if a.final_hp > 0]
         if not live_allies:
             msg = f"No valid ally targets for skill: {self.name}"
@@ -59,7 +61,10 @@ class Ability:
         raise NotImplementedError(msg)
 
     def use(self, allies: list[Character], enemy: Player) -> None:
-        return self._use_func(allies, enemy)
+        if self.ability_type == "attack":
+            self.default_attack(allies, enemy)
+        else:
+            self.default_buff(allies, enemy)
 
 
 class Card:
@@ -70,22 +75,24 @@ class Card:
         self.game = game
         self.element = element
 
+        card_damage_type = CARD_ELEMENT_TO_DAMAGE_TYPE[self.element]
+
         self.basic = Ability(
             name=f"{self.name} Basic",
             desc=f"{self.name} strikes an enemy.",
-            element=self.element,
+            damage_type=card_damage_type,
             damage_number=CARD_BASIC_ATTACK,
         )
         self.skill = Ability(
             name=f"{self.name} Skill",
             desc=f"{self.name} uses their unique ability.",
-            element=self.element,
+            damage_type=card_damage_type,
             damage_number=CARD_SKILL_ATTACK,
         )
         self.ultimate = Ability(
             name=f"{self.name} Ultimate",
             desc=f"{self.name} unleashes a devastating ultimate attack.",
-            element=self.element,
+            damage_type=card_damage_type,
             damage_number=CARD_ULTIMATE_ATTACK,
         )
 

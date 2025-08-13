@@ -5,7 +5,10 @@ from typing import TYPE_CHECKING, Any
 
 import discord
 from discord import Embed, Interaction
-from discord.ui import Button, Select, View
+from discord.ui import Button, Select
+
+from durin_tcg.constants import EMBED_TIMEOUT
+from durin_tcg.views.base import BaseView
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Coroutine
@@ -14,7 +17,7 @@ if TYPE_CHECKING:
     from durin_tcg.models.user import CardDeck
 
 
-class SwitchDeckView(View):
+class SwitchDeckView(BaseView):
     def __init__(
         self,
         user: discord.User | discord.Member,
@@ -22,7 +25,7 @@ class SwitchDeckView(View):
         selected_deck: CardDeck,
         battle_command: BattleCommand,
         on_confirm: Callable[[Interaction], Coroutine[Any, Any, None]],
-        timeout: float = 60,
+        timeout: float = EMBED_TIMEOUT,
     ) -> None:
         super().__init__(timeout=timeout)
 
@@ -33,6 +36,8 @@ class SwitchDeckView(View):
         self.selected_deck_index: int = selected_deck_index
         self.selected_deck = selected_deck
         self.all_decks = self._get_user_all_decks()
+
+        self.message: discord.Message | None = None
 
         self.add_item(DeckSelect(self.all_decks))
         self.add_item(ConfirmSwitchDeckButton())
@@ -47,6 +52,8 @@ class SwitchDeckView(View):
             color=discord.Color.orange(),
         )
         await interaction.response.edit_message(embed=embed, view=self)
+
+        self.message = await interaction.original_response()
 
 
 class DeckSelect(Select):
@@ -64,17 +71,13 @@ class DeckSelect(Select):
 
         view.selected_deck_index = int(self.values[0])
         selected_deck_name = view.all_decks[view.selected_deck_index].name
+        selected_deck_cards = ", ".join(view.all_decks[view.selected_deck_index].cards)
 
-        try:
-            await interaction.response.send_message(
-                f"Deck `{selected_deck_name}` selected. Click **Confirm Switch** to continue.",
-                ephemeral=True,
-            )
-        except discord.InteractionResponded:
-            await interaction.followup.send(
-                f"Deck `{self.values[0]}` selected. Click **Confirm Switch** to continue.",
-                ephemeral=True,
-            )
+        await interaction.response.edit_message(
+            content=f"Deck `{selected_deck_name}` with `{selected_deck_cards}` selected. Click **Confirm Switch** to continue.",
+            view=view,
+            embed=None,
+        )
 
 
 class ConfirmSwitchDeckButton(Button):
@@ -93,8 +96,5 @@ class ConfirmSwitchDeckButton(Button):
 
         with contextlib.suppress(discord.InteractionResponded):
             await interaction.response.defer(ephemeral=True)
-
-        with contextlib.suppress(discord.NotFound):
-            await interaction.followup.send("Deck switched successfully!", ephemeral=True)
 
         await view.on_confirm(interaction)
